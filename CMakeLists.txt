@@ -3,8 +3,6 @@ project("opengl")
 
 find_package(OpenGL REQUIRED)
 
-add_subdirectory("src")
-
 # link cpp files
 add_executable(${PROJECT_NAME}
   "src/glad.c"
@@ -17,12 +15,18 @@ set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
 add_subdirectory("include/glfw-3.3.8")
+add_subdirectory("src")
 
-# setup glad
-include_directories("include")
+target_include_directories(${PROJECT_NAME} PUBLIC
+  ${PROJECT_SOURCE_DIR}/include
+)
+
+# include_directories("include")
 
 # link to executable
 target_link_libraries(${PROJECT_NAME}
+  WINDOW
+
   OpenGL
   glfw
 )

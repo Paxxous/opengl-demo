@@ -1,25 +1,22 @@
-#include <iostream>
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
+#include "window/Window.hpp"
+
+#include <iostream>
 
 // Callbacks
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
   glViewport(0, 0, width, height);
 }
 
-// Window struct.
-struct window {
-  GLFWwindow* window;
-  const char* title;
-  int width;
-  int height;
 
-  // 
-  inline void initWindow() {
-    window = glfwCreateWindow(height, width, title, NULL, NULL);
+// Function handlers
+void processInput(GLFWwindow* window) {
+   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    glfwSetWindowShouldClose(window, true);
   }
-};
+}
 
 int main() {
 
@@ -30,19 +27,8 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // we love you mac, mwa! XOXOXO
 
-  // Prepare window
   window win;
-  win.width = 800;
-  win.height = 600;
-  win.title = "Hello, window!";
-
-  win.initWindow();
-  if (win.window == NULL) {
-    std::cout << "Err: failed creating opengl window.\n";
-    glfwTerminate();
-    return -1;
-  }
-  glfwMakeContextCurrent(win.window);
+  windowInit(win);
 
   // Prepare glad
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -50,12 +36,13 @@ int main() {
     return -1;
   }
 
-  // Prepare opengl
   glViewport(0, 0, win.width, win.height);
   glfwSetFramebufferSizeCallback(win.window, framebuffer_size_callback);
 
   // Render loop
   while (!glfwWindowShouldClose(win.window))  {
+    processInput(win.window);
+
     glfwSwapBuffers(win.window);
     glfwPollEvents();
   }
